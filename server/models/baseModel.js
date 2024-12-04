@@ -8,30 +8,24 @@ const BaseModel = (tableName, knexInstance) => ({
   async list({ limit = 10, offset = 0 }) {
     return await knexInstance(tableName)
       .select("*")
-      .where({ deleted_at: null })
       .limit(limit)
       .offset(offset);
   },
 
   async findById(id) {
-    return await knexInstance(tableName)
-      .where({ id, deleted_at: null })
-      .first();
+    return await knexInstance(tableName).where({ id }).first();
   },
 
   async update(id, data) {
     const [updatedRecord] = await knexInstance(tableName)
-      .where({ id, deleted_at: null })
+      .where({ id })
       .update({ ...data, updated_at: knex.fn.now() })
       .returning("*");
     return updatedRecord;
   },
-  async softDelete(id) {
-    const [deletedRecord] = await knexInstance(tableName)
-      .where({ id, deleted_at: null })
-      .update({ deleted_at: knex.fn.now() })
-      .returning("*");
-    return deletedRecord;
+
+  async delete(id) {
+    return await knexInstance(tableName).where({ id }).del();
   },
 });
 
