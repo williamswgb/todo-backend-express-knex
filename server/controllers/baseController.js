@@ -44,10 +44,10 @@ const baseController = (model, entityName) => ({
     try {
       const { id } = req.params;
       const updatedData = await model.update(id, req.body);
-      if (!updatedData.length) {
+      if (!updatedData) {
         return res.status(404).json({ message: `${entityName} not found` });
       }
-      res.status(200).json(updatedData[0]);
+      res.status(200).json(updatedData);
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
@@ -56,11 +56,7 @@ const baseController = (model, entityName) => ({
     try {
       const { id } = req.params;
 
-      const deletedData = await model.softDelete(id);
-      if (!deletedData.length) {
-        return res.status(404).json({ message: `${entityName} not found` });
-      }
-
+      const deletedData = await model.delete(id);
       res.status(200).json({ message: `${entityName} deleted successfully` });
     } catch (error) {
       res.status(500).json({ error: err.message });

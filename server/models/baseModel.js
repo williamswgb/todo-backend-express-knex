@@ -19,7 +19,7 @@ const BaseModel = (tableName, knexInstance) => ({
   async update(id, data) {
     const [updatedRecord] = await knexInstance(tableName)
       .where({ id })
-      .update({ ...data, updated_at: knex.fn.now() })
+      .update({ ...data, updated_at: knexInstance.fn.now() })
       .returning("*");
     return updatedRecord;
   },
