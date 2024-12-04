@@ -5,11 +5,7 @@
 exports.up = function (knex) {
   return knex.schema.createTable("tasks_assignees", function (table) {
     table.uuid("id").defaultTo(knex.fn.uuid()).primary();
-    table
-      .uuid("tasks_id")
-      .references("id")
-      .inTable("tasks")
-      .onDelete("CASCADE");
+    table.uuid("task_id").references("id").inTable("tasks").onDelete("CASCADE");
     table
       .uuid("assignee_id")
       .references("id")
