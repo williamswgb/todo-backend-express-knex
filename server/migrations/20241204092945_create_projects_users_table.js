@@ -16,10 +16,8 @@ exports.up = function (knex) {
       .inTable("users")
       .onDelete("CASCADE")
       .notNullable();
-    table.enu("role", ["admin", "member"]).notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
     table.timestamp("updated_at").defaultTo(knex.fn.now()).notNullable();
-    table.timestamp("deleted_at").nullable(); // Soft delete
   });
 };
 

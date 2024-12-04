@@ -19,7 +19,6 @@ exports.up = function (knex) {
       .onDelete("SET NULL");
     table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
     table.timestamp("updated_at").defaultTo(knex.fn.now()).notNullable();
-    table.timestamp("deleted_at").nullable(); // Soft delete
   });
 };
 
