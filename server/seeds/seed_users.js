@@ -9,12 +9,9 @@ exports.seed = async function (knex) {
   await knex("users").del();
   await knex("users").insert([
     {
-      id: knex.fn.uuid(),
-      name: "William",
-      email: "williamsw.gb@gmail.com",
-      password: await bcrypt.hash("123456", 10),
-      created_at: knex.fn.now(),
-      updated_at: knex.fn.now(),
+      name: "My Name",
+      email: "My Email",
+      password: await bcrypt.hash("My Password", 10),
     },
   ]);
 };
