@@ -7,6 +7,12 @@ exports.up = function (knex) {
     table.uuid("id").defaultTo(knex.fn.uuid()).primary();
     table.string("name").notNullable();
     table.string("description").nullable();
+    table
+      .uuid("organisation_id")
+      .references("id")
+      .inTable("organisations")
+      .onDelete("CASCADE")
+      .notNullable();
     table.timestamp("created_at").defaultTo(knex.fn.now()).notNullable();
     table.timestamp("updated_at").defaultTo(knex.fn.now()).notNullable();
   });
