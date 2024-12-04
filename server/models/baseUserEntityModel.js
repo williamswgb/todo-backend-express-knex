@@ -1,17 +1,17 @@
 const BaseUserEntityModel = (tableName, knexInstance) => ({
-  async addUserToEntity(entityName, entityId, userId) {
+  async addUserToEntity(entityId, entityName, userId, userName = "user") {
     const [createdRecord] = await knexInstance(tableName)
       .insert({
         [`${entityName}_id`]: entityId,
-        user_id: userId,
+        [`${userName}_id`]: userId,
       })
       .returning("*");
     return createdRecord;
   },
 
-  async removeUserFromEntity(entityName, entityId, userId) {
+  async removeUserFromEntity(entityId, entityName, userId, userName = "user") {
     return await knexInstance(tableName)
-      .where({ [`${entityName}_id`]: entityId, user_id: userId })
+      .where({ [`${entityName}_id`]: entityId, [`${userName}_id`]: userId })
       .del();
   },
 });

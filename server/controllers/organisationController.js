@@ -4,8 +4,8 @@ const baseUserEntityController = require("./baseUserEntityController");
 const OrganisationModel = require("../models/OrganisationModel");
 
 const organisationController = {
-  ...baseController("Organisation", OrganisationModel),
-  ...baseUserEntityController("Organisation", OrganisationModel),
+  ...baseController(OrganisationModel, "Organisation"),
+  ...baseUserEntityController(OrganisationModel, "Organisation"),
 };
 
 module.exports = organisationController;

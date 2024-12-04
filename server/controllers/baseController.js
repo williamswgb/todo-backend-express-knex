@@ -1,4 +1,4 @@
-const baseController = (entityName, model) => ({
+const baseController = (model, entityName) => ({
   async create(req, res) {
     try {
       const data = await model.create(req.body);
