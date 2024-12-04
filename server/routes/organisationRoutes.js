@@ -12,4 +12,7 @@ router.put("/:id", organisationController.update); // PUT /organisations/:id
 
 router.delete("/:id", organisationController.delete); // DELETE /organisations/:id
 
+router.post("/:id/add-user", organisationController.addUser); // POST /organisations/:id/add-user
+router.post("/:id/remove-user", organisationController.removeUser); // POST /organisations/:id/remove-user
+
 module.exports = router;
