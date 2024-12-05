@@ -1,4 +1,4 @@
-const baseUserEntityController = (model, entityName, userName = "user") => ({
+const baseUserEntityController = (model, entityName, userName = "User") => ({
   async addUser(req, res) {
     try {
       const { id } = req.params;
