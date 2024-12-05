@@ -13,6 +13,6 @@ router.put("/:id", taskController.update); // PUT /tasks/:id
 router.delete("/:id", taskController.delete); // DELETE /tasks/:id
 
 router.post("/:id/assign", taskController.addUser); // POST /tasks/:id/assign
-router.post("/:id/unasssign", taskController.removeUser); // POST /tasks/:id/unassign
+router.post("/:id/unassign", taskController.removeUser); // POST /tasks/:id/unassign
 
 module.exports = router;
