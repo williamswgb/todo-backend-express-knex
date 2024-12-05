@@ -6,13 +6,13 @@ const entity = "user";
 const path = `/${entity}s`;
 const testedProps = ["name", "email"];
 
-const getUserData = async (number) => ({
-  name: `Test user ${number}`,
-  email: `testemail${number}@gmail.com`,
-  password: await bcrypt.hash(`testpassword${number}`, 10),
+const getData = async (entity, number) => ({
+  name: `Test ${entity} ${number}`,
+  email: `test${entity}email${number}@gmail.com`,
+  password: await bcrypt.hash(`test${entity}password${number}`, 10),
 });
 
-describe(`${capitalizeFirstLetter(entity)} Endpoints`, () => {
+describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
   describe(`GET ${path}`, () => {
     test(`It should return a list of ${entity}s`, async () => {
       const listRes = await request.get(path);
@@ -26,7 +26,7 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints`, () => {
 
   describe(`GET ${path}`, () => {
     test(`It should create a new ${entity} with valid input`, async () => {
-      const data = await getUserData(Math.random());
+      const data = await getData(entity, Math.random());
       const createRes = await request.post(path, data);
 
       expect(createRes.status).toBe(201);
@@ -36,8 +36,16 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints`, () => {
       }
     });
 
+    test("It should return error if required fields are missing", async () => {
+      const invalidRes = await request.post(path, {});
+
+      expect(invalidRes.status).toBe(500);
+      expect(invalidRes.body).toHaveProperty("error");
+    });
+
+    // Specific test for user email
     test(`It should return error when ${entity} email is already existed`, async () => {
-      const data = await getUserData(Math.random());
+      const data = await getData(entity, Math.random());
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
 
@@ -45,18 +53,11 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints`, () => {
       expect(invalidRes.status).toBe(500);
       expect(invalidRes.body).toHaveProperty("error");
     });
-
-    test("It should return error if required fields are missing", async () => {
-      const invalidRes = await request.post(path, {});
-
-      expect(invalidRes.status).toBe(500);
-      expect(invalidRes.body).toHaveProperty("error");
-    });
   });
 
   describe(`GET ${path}/:id`, () => {
     test(`It should fetch an existing ${entity} by id`, async () => {
-      const data = await getUserData(Math.random());
+      const data = await getData(entity, Math.random());
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
       const createdData = createRes.body;
@@ -79,7 +80,7 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints`, () => {
 
   describe(`PUT ${path}/:id`, () => {
     test(`It should update ${entity} data with valid new input and keep the old data the same`, async () => {
-      const data = await getUserData(Math.random());
+      const data = await getData(entity, Math.random());
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
       const createdData = createRes.body;
@@ -104,7 +105,7 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints`, () => {
 
   describe(`DELETE ${path}/:id`, () => {
     test(`It should delete an existing ${entity} by id`, async () => {
-      const data = await getUserData(Math.random());
+      const data = await getData(entity, Math.random());
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
       const createdData = createRes.body;
