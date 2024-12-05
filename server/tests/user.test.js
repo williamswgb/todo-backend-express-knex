@@ -1,119 +1,126 @@
-const request = require("./util/httpRequests");
 const bcrypt = require("bcrypt");
+const request = require("./util/httpRequests");
+const { capitalizeFirstLetter } = require("../utils/string");
 
-describe("User Endpoints", () => {
-  describe("GET /users", () => {
-    test("It should return a list of users", async () => {
-      const response = await request.get("/users");
-      expect(response.status).toBe(200);
-      expect(response.body).toBeInstanceOf(Array);
-      expect(response.body[0]).toHaveProperty("id");
-      expect(response.body[0]).toHaveProperty("name");
-      expect(response.body[0]).toHaveProperty("email");
+const entity = "user";
+const path = `/${entity}s`;
+const testedProps = ["name", "email"];
+
+const getUserData = async (number) => ({
+  name: `Test user ${number}`,
+  email: `testemail${number}@gmail.com`,
+  password: await bcrypt.hash(`testpassword${number}`, 10),
+});
+
+describe(`${capitalizeFirstLetter(entity)} Endpoints`, () => {
+  describe(`GET ${path}`, () => {
+    test(`It should return a list of ${entity}s`, async () => {
+      const listRes = await request.get(path);
+      expect(listRes.status).toBe(200);
+      expect(listRes.body).toBeInstanceOf(Array);
+      for (key of ["id", ...testedProps]) {
+        expect(listRes.body[0]).toHaveProperty(key);
+      }
     });
   });
 
-  describe("POST /users", () => {
-    test("It should create a new user", async () => {
-      const newUser = {
-        name: `Test User ${Math.random()}`,
-        email: `testemail${Math.random()}@gmail.com`,
-        password: await bcrypt.hash(`testpassword${Math.random}`, 10),
-      };
-      const response = await request.post("/users", newUser);
+  describe(`GET ${path}`, () => {
+    test(`It should create a new ${entity} with valid input`, async () => {
+      const data = await getUserData(Math.random());
+      const createRes = await request.post(path, data);
 
-      expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty("id");
-      expect(response.body).toHaveProperty("name", newUser.name);
-      expect(response.body).toHaveProperty("email", newUser.email);
-    });
-
-    test("It should return 500 if required fields are missing", async () => {
-      const response = await request.post("/users", {});
-
-      expect(response.status).toBe(500);
-      expect(response.body).toHaveProperty("error");
-    });
-  });
-
-  describe("GET /users/:id", () => {
-    test("It should fetch a user by id", async () => {
-      const newUser = {
-        name: `Test User ${Math.random()}`,
-        email: `testemail${Math.random()}@gmail.com`,
-        password: await bcrypt.hash(`testpassword${Math.random}`, 10),
-      };
-      const createRes = await request.post("/users", newUser);
       expect(createRes.status).toBe(201);
-      const createdUser = createRes.body;
-
-      const response = await request.get(`/users/${createdUser.id}`);
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("id");
-      expect(response.body).toHaveProperty("name", newUser.name);
-      expect(response.body).toHaveProperty("email", newUser.email);
+      expect(createRes.body).toHaveProperty("id");
+      for (key of testedProps) {
+        expect(createRes.body).toHaveProperty(key, data[key]);
+      }
     });
 
-    test("It should return 500 if user id is not found", async () => {
-      const response = await request.get("/users/1");
+    test(`It should return error when ${entity} email is already existed`, async () => {
+      const data = await getUserData(Math.random());
+      const createRes = await request.post(path, data);
+      expect(createRes.status).toBe(201);
 
-      expect(response.status).toBe(500);
-      expect(response.body).toHaveProperty("error");
+      const invalidRes = await request.post(path, data);
+      expect(invalidRes.status).toBe(500);
+      expect(invalidRes.body).toHaveProperty("error");
+    });
+
+    test("It should return error if required fields are missing", async () => {
+      const invalidRes = await request.post(path, {});
+
+      expect(invalidRes.status).toBe(500);
+      expect(invalidRes.body).toHaveProperty("error");
     });
   });
 
-  describe("PUT /users/:id", () => {
-    test("It should update user data", async () => {
-      const oldUser = {
-        name: `Test User ${Math.random()}`,
-        email: `testemail${Math.random()}@gmail.com`,
-        password: await bcrypt.hash(`testpassword${Math.random}`, 10),
-      };
-      const createRes = await request.post("/users", oldUser);
+  describe(`GET ${path}/:id`, () => {
+    test(`It should fetch an existing ${entity} by id`, async () => {
+      const data = await getUserData(Math.random());
+      const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
-      const createdUser = createRes.body;
+      const createdData = createRes.body;
 
-      const newUser = {
-        name: `Test Updated User ${Math.random()}`,
-      };
-      const response = await request.put(`/users/${createdUser.id}`, newUser);
-      expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty("id");
-      expect(response.body).toHaveProperty("name", newUser.name);
-      expect(response.body).toHaveProperty("email", oldUser.email);
+      const findRes = await request.get(`${path}/${createdData.id}`);
+      expect(findRes.status).toBe(200);
+      expect(findRes.body).toHaveProperty("id");
+      for (key of testedProps) {
+        expect(createRes.body).toHaveProperty(key, data[key]);
+      }
     });
 
-    test("It should return 500 if user id is not found", async () => {
-      const response = await request.put("/users/1", {});
+    test(`It should return error if ${entity} id is not found`, async () => {
+      const invalidRes = await request.get(`${path}/invalid-id`, {});
 
-      expect(response.status).toBe(500);
-      expect(response.body).toHaveProperty("error");
+      expect(invalidRes.status).toBe(500);
+      expect(invalidRes.body).toHaveProperty("error");
     });
   });
 
-  describe("DELETE /users/:id", () => {
-    test("It should delete user by id", async () => {
-      const newUser = {
-        name: `Test User ${Math.random()}`,
-        email: `testemail${Math.random()}@gmail.com`,
-        password: await bcrypt.hash(`testpassword${Math.random}`, 10),
-      };
-      const createRes = await request.post("/users", newUser);
+  describe(`PUT ${path}/:id`, () => {
+    test(`It should update ${entity} data with valid new input and keep the old data the same`, async () => {
+      const data = await getUserData(Math.random());
+      const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
-      const createdUser = createRes.body;
+      const createdData = createRes.body;
 
-      const delResp = await request.delete(`/users/${createdUser.id}`);
-      expect(delResp.status).toBe(200);
-
-      const findResp = await request.get(`/users/${createdUser.id}`);
-      expect(findResp.status).toBe(404);
+      const newData = {
+        name: `Test updated ${entity} ${Math.random()}`,
+      };
+      const updateRes = await request.put(`${path}/${createdData.id}`, newData);
+      expect(updateRes.status).toBe(200);
+      expect(updateRes.body).toHaveProperty("id");
+      expect(updateRes.body).toHaveProperty("name", newData.name);
+      expect(updateRes.body).toHaveProperty("email", data.email);
     });
 
-    test("It should return 500 if user id is not found", async () => {
-      const response = await request.delete("/users/1", {});
+    test(`It should return error if ${entity} id is not found`, async () => {
+      const invalidRes = await request.put(`${path}/invalid-id`, {});
 
-      expect(response.status).toBe(500);
-      expect(response.body).toHaveProperty("error");
+      expect(invalidRes.status).toBe(500);
+      expect(invalidRes.body).toHaveProperty("error");
+    });
+  });
+
+  describe(`DELETE ${path}/:id`, () => {
+    test(`It should delete an existing ${entity} by id`, async () => {
+      const data = await getUserData(Math.random());
+      const createRes = await request.post(path, data);
+      expect(createRes.status).toBe(201);
+      const createdData = createRes.body;
+
+      const delRes = await request.delete(`${path}/${createdData.id}`);
+      expect(delRes.status).toBe(200);
+
+      const findRes = await request.get(`${path}/${createdData.id}`);
+      expect(findRes.status).toBe(404);
+    });
+
+    test(`It should return error if ${entity} id is not found`, async () => {
+      const invalidRes = await request.delete(`${path}/invalid-id`);
+
+      expect(invalidRes.status).toBe(500);
+      expect(invalidRes.body).toHaveProperty("error");
     });
   });
 });
