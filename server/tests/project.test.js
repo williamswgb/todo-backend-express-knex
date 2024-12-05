@@ -6,6 +6,7 @@ const { getUserData } = require("./user.test");
 
 const entity = "project";
 const path = `/${entity}s`;
+const dependencyPath = "/organisations";
 const testedProps = ["name", "description", "organisation_id"];
 
 const getData = (entity, number, id) => ({
@@ -36,12 +37,12 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 
   describe(`POST ${path}`, () => {
     test(`It should create a new ${entity} with valid input`, async () => {
-      // Get a dummy organisation
-      const listOrgRes = await request.get("/organisations");
-      const firstOrg = listOrgRes.body[0];
+      // Get a dummy dependency data
+      const listDependencyRes = await request.get(dependencyPath);
+      const dummyDependencyData = listDependencyRes.body[0];
 
-      // create a dummy data
-      const data = getData(entity, Math.random(), firstOrg.id);
+      // Create a dummy entity data
+      const data = getData(entity, Math.random(), dummyDependencyData.id);
       const createRes = await request.post(path, data);
 
       expect(createRes.status).toBe(201);
@@ -61,12 +62,12 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 
   describe(`GET ${path}/:id`, () => {
     test(`It should fetch an existing ${entity} by id`, async () => {
-      // Get a dummy organisation
-      const listOrgRes = await request.get("/organisations");
-      const firstOrg = listOrgRes.body[0];
+      // Get a dummy dependency data
+      const listDependencyRes = await request.get(dependencyPath);
+      const dummyDependencyData = listDependencyRes.body[0];
 
-      // Create a dummy data
-      const data = getData(entity, Math.random(), firstOrg.id);
+      // Create a dummy entity data
+      const data = getData(entity, Math.random(), dummyDependencyData.id);
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
       const createdData = createRes.body;
@@ -89,12 +90,12 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 
   describe(`PUT ${path}/:id`, () => {
     test(`It should update ${entity} data with valid new input and keep the old data the same`, async () => {
-      // Get a dummy organisation
-      const listOrgRes = await request.get("/organisations");
-      const firstOrg = listOrgRes.body[0];
+      // Get a dummy dependency data
+      const listDependencyRes = await request.get(dependencyPath);
+      const dummyDependencyData = listDependencyRes.body[0];
 
-      // Create a dummy data
-      const data = getData(entity, Math.random(), firstOrg.id);
+      // Create a dummy entity data
+      const data = getData(entity, Math.random(), dummyDependencyData.id);
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
       const createdData = createRes.body;
@@ -119,12 +120,12 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 
   describe(`DELETE ${path}/:id`, () => {
     test(`It should delete an existing ${entity} by id`, async () => {
-      // Get a dummy organisation
-      const listOrgRes = await request.get("/organisations");
-      const firstOrg = listOrgRes.body[0];
+      // Get a dummy dependency data
+      const listDependencyRes = await request.get(dependencyPath);
+      const dummyDependencyData = listDependencyRes.body[0];
 
-      // Create a dummy data
-      const data = getData(entity, Math.random(), firstOrg.id);
+      // Create a dummy entity data
+      const data = getData(entity, Math.random(), dummyDependencyData.id);
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
       const createdData = createRes.body;
@@ -146,47 +147,44 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 
   describe(`POST ${path}/add-user`, () => {
     test(`It should add a user into ${entity}`, async () => {
-      // Get a dummy organisation
-      const listOrgRes = await request.get("/organisations");
-      const firstOrg = listOrgRes.body[0];
+      // Get a dummy dependency data
+      const listDependencyRes = await request.get(dependencyPath);
+      const dummyDependencyData = listDependencyRes.body[0];
 
       // Create a dummy entity data
-      const data = getData(entity, Math.random(), firstOrg.id);
+      const data = getData(entity, Math.random(), dummyDependencyData.id);
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
       const createdData = createRes.body;
 
       // Get dummy user data
       const listUserRes = await request.get("/users");
-      const firstUser = listUserRes.body[0];
+      const dummyUser = listUserRes.body[0];
 
       // Add user to entity
       const addUserRes = await request.post(
         `${path}/${createdData.id}/add-user`,
         {
-          user_id: firstUser.id,
+          user_id: dummyUser.id,
         }
       );
       expect(addUserRes.status).toBe(201);
-      expect(addUserRes.body).toHaveProperty("user_id", firstUser.id);
+      expect(addUserRes.body).toHaveProperty("user_id", dummyUser.id);
       expect(addUserRes.body).toHaveProperty(`${entity}_id`, createdData.id);
     });
 
     test("It should return error if required fields are missing", async () => {
       // Test with both invalid id
-      const invalidRes = await request.post(
-        `${path}/invalid-organisation-id/add-user`,
-        {}
-      );
+      const invalidRes = await request.post(`${path}/invalid-id/add-user`, {});
       expect(invalidRes.status).toBe(400);
 
       // Test with empty user id
-      // Get a dummy organisation
-      const listOrgRes = await request.get("/organisations");
-      const firstOrg = listOrgRes.body[0];
+      // Get a dummy dependency data
+      const listDependencyRes = await request.get(dependencyPath);
+      const dummyDependencyData = listDependencyRes.body[0];
 
       // Create a dummy entity data
-      const data = getData(entity, Math.random(), firstOrg.id);
+      const data = getData(entity, Math.random(), dummyDependencyData.id);
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
       const createdData = createRes.body;
@@ -201,25 +199,25 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 
   describe(`POST ${path}/remove-user`, () => {
     test(`It should remove a user from ${entity}`, async () => {
-      // Get a dummy organisation
-      const listOrgRes = await request.get("/organisations");
-      const firstOrg = listOrgRes.body[0];
+      // Get a dummy dependency data
+      const listDependencyRes = await request.get(dependencyPath);
+      const dummyDependencyData = listDependencyRes.body[0];
 
       // Create a dummy entity data
-      const data = getData(entity, Math.random(), firstOrg.id);
+      const data = getData(entity, Math.random(), dummyDependencyData.id);
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
       const createdData = createRes.body;
 
       // Get dummy user data
       const listUserRes = await request.get("/users");
-      const firstUser = listUserRes.body[0];
+      const dummyUser = listUserRes.body[0];
 
       // Add user to entity
       const addUserRes = await request.post(
         `${path}/${createdData.id}/add-user`,
         {
-          user_id: firstUser.id,
+          user_id: dummyUser.id,
         }
       );
       expect(addUserRes.status).toBe(201);
@@ -228,7 +226,7 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
       const removeUserRes = await request.post(
         `${path}/${createdData.id}/remove-user`,
         {
-          user_id: firstUser.id,
+          user_id: dummyUser.id,
         }
       );
       expect(removeUserRes.status).toBe(200);
@@ -237,19 +235,19 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
     test("It should return error if required fields are missing", async () => {
       // Test with both invalid id
       const invalidRes = await request.post(
-        `${path}/invalid-organisation-id/remove-user`,
+        `${path}/invalid-id/remove-user`,
         {}
       );
       expect(invalidRes.status).toBe(500);
       expect(invalidRes.body).toHaveProperty("error");
 
       // Test with empty user id
-      // Get a dummy organisation
-      const listOrgRes = await request.get("/organisations");
-      const firstOrg = listOrgRes.body[0];
+      // Get a dummy dependency data
+      const listDependencyRes = await request.get(dependencyPath);
+      const dummyDependencyData = listDependencyRes.body[0];
 
       // Create a dummy entity data
-      const data = getData(entity, Math.random(), firstOrg.id);
+      const data = getData(entity, Math.random(), dummyDependencyData.id);
       const createRes = await request.post(path, data);
       expect(createRes.status).toBe(201);
       const createdData = createRes.body;
