@@ -9,10 +9,10 @@ const path = `/${entity}s`;
 const dependencyPath = "/organisations";
 const testedProps = ["name", "description", "organisation_id"];
 
-const getData = (entity, number, id) => ({
+const getData = (entity, number, organisation_id) => ({
   name: `Test ${entity} ${number}`,
   description: `Test ${entity} description ${number}`,
-  organisation_id: id,
+  organisation_id,
 });
 
 describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {

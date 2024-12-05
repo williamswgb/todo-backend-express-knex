@@ -10,10 +10,10 @@ const path = `/${entity}s`;
 const dependencyPath = "/projects";
 const testedProps = ["title", "description", "project_id"];
 
-const getData = (entity, number, id) => ({
+const getData = (entity, number, project_id) => ({
   title: `Test ${entity} ${number}`,
   description: `Test ${entity} description ${number}`,
-  project_id: id,
+  project_id,
 });
 
 describe(`${capitalizeFirstLetter(entity)} Endpoints Test Suite`, () => {
