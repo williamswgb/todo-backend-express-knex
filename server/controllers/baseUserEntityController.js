@@ -38,11 +38,9 @@ const baseUserEntityController = (model, entityName, userName = "user") => ({
         user_id,
         userName.toLowerCase()
       );
-      res
-        .status(201)
-        .json({
-          message: `${userName} has been successfully removed from ${entityName.toLowerCase()}`,
-        });
+      res.status(201).json({
+        message: `${userName} has been successfully removed from ${entityName.toLowerCase()}`,
+      });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }

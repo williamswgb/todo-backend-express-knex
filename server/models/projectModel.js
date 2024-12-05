@@ -7,4 +7,4 @@ const projectModel = {
   ...baseUserEntityModel("projects_users", knex),
 };
 
-module.export = projectModel;
+module.exports = projectModel;

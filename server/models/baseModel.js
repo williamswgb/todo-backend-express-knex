@@ -25,3 +25,5 @@ const BaseModel = (tableName, knexInstance) => ({
     return await knexInstance(tableName).where({ id }).del();
   },
 });
+
+module.exports = BaseModel;

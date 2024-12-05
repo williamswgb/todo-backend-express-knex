@@ -7,4 +7,4 @@ const organisationModel = {
   ...baseUserEntityModel("organisations_users", knex),
 };
 
-module.export = organisationModel;
+module.exports = organisationModel;

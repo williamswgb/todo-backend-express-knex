@@ -7,4 +7,4 @@ const taskModel = {
   ...baseUserEntityModel("tasks_assignees", knex),
 };
 
-module.export = taskModel;
+module.exports = taskModel;
