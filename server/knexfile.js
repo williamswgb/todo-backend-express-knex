@@ -15,10 +15,10 @@ module.exports = {
     },
     pool: {
       min: 2,
-      max: 10,
+      max: 20,
     },
     migrations: {
-      tableName: "knex_migrations",
+      directory: "./migrations",
     },
   },
 
@@ -31,26 +31,13 @@ module.exports = {
     },
     pool: {
       min: 2,
-      max: 10,
+      max: 20,
     },
     migrations: {
-      tableName: "knex_migrations",
+      directory: "./migrations",
     },
-  },
-
-  staging: {
-    client: "pg",
-    connection: {
-      database: "my_db",
-      user: "username",
-      password: "password",
-    },
-    pool: {
-      min: 2,
-      max: 10,
-    },
-    migrations: {
-      tableName: "knex_migrations",
+    seeds: {
+      directory: "./seeds",
     },
   },
 
@@ -59,10 +46,7 @@ module.exports = {
     connection: process.env.DATABASE_URL,
     pool: {
       min: 2,
-      max: 10,
-    },
-    migrations: {
-      tableName: "knex_migrations",
+      max: 20,
     },
   },
 };
