@@ -12,6 +12,11 @@ const getData = (entity, number) => ({
 });
 
 describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
+  beforeAll(async () => {
+    const userData = await getUserData("user", Math.random());
+    const createUserRes = await request.post("/users", userData);
+  });
+
   describe(`GET ${path}`, () => {
     test(`It should return a list of ${entity}s`, async () => {
       const listRes = await request.get(path);
@@ -115,25 +120,26 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 
   describe(`POST ${path}/add-user`, () => {
     test(`It should add a user into ${entity}`, async () => {
-      const orgData = getData(entity, Math.random());
-      const createOrgRes = await request.post(path, orgData);
-      expect(createOrgRes.status).toBe(201);
-      const createdOrg = createOrgRes.body;
+      // Create dummy entity data
+      const data = getData(entity, Math.random());
+      const createRes = await request.post(path, data);
+      expect(createRes.status).toBe(201);
+      const createdData = createRes.body;
 
-      const userData = await getUserData("user", Math.random());
-      const createUserRes = await request.post("/users", userData);
-      const createdUser = createUserRes.body;
+      // Get dummy user data
+      const listUserRes = await request.get("/users");
+      const firstUser = listUserRes.body[0];
 
+      // Add user to entity
       const addUserRes = await request.post(
-        `${path}/${createdOrg.id}/add-user`,
+        `${path}/${createdData.id}/add-user`,
         {
-          user_id: createdUser.id,
+          user_id: firstUser.id,
         }
       );
-
       expect(addUserRes.status).toBe(201);
-      expect(addUserRes.body).toHaveProperty("user_id", createdUser.id);
-      expect(addUserRes.body).toHaveProperty("organisation_id", createdOrg.id);
+      expect(addUserRes.body).toHaveProperty("user_id", firstUser.id);
+      expect(addUserRes.body).toHaveProperty(`${entity}_id`, createdData.id);
     });
 
     test("It should return error if required fields are missing", async () => {
@@ -146,12 +152,12 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 
       // Test with empty user id
       const data = getData(entity, Math.random());
-      const createOrgRes = await request.post(path, data);
-      expect(createOrgRes.status).toBe(201);
-      const createdOrg = createOrgRes.body;
+      const createRes = await request.post(path, data);
+      expect(createRes.status).toBe(201);
+      const createdData = createRes.body;
 
       const addUserRes = await request.post(
-        `${path}/${createdOrg.id}/add-user`,
+        `${path}/${createdData.id}/add-user`,
         {}
       );
       expect(addUserRes.status).toBe(400);
@@ -160,31 +166,30 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 
   describe(`POST ${path}/remove-user`, () => {
     test(`It should remove a user from ${entity}`, async () => {
-      // Create dummy organisation data
-      const orgData = getData(entity, Math.random());
-      const createOrgRes = await request.post(path, orgData);
-      expect(createOrgRes.status).toBe(201);
-      const createdOrg = createOrgRes.body;
+      // Create dummy entity data
+      const data = getData(entity, Math.random());
+      const createRes = await request.post(path, data);
+      expect(createRes.status).toBe(201);
+      const createdData = createRes.body;
 
-      // Create dummy user data
-      const userData = await getUserData("user", Math.random());
-      const createUserRes = await request.post("/users", userData);
-      const createdUser = createUserRes.body;
+      // Get dummy user data
+      const listUserRes = await request.get("/users");
+      const firstUser = listUserRes.body[0];
 
-      // Add user to organisation
+      // Add user to entity
       const addUserRes = await request.post(
-        `${path}/${createdOrg.id}/add-user`,
+        `${path}/${createdData.id}/add-user`,
         {
-          user_id: createdUser.id,
+          user_id: firstUser.id,
         }
       );
       expect(addUserRes.status).toBe(201);
 
-      // Remove user from organisation
+      // Remove user from entity
       const removeUserRes = await request.post(
-        `${path}/${createdOrg.id}/remove-user`,
+        `${path}/${createdData.id}/remove-user`,
         {
-          user_id: createdUser.id,
+          user_id: firstUser.id,
         }
       );
       expect(removeUserRes.status).toBe(200);
@@ -201,12 +206,12 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 
       // Test with empty user id
       const data = getData(entity, Math.random());
-      const createOrgRes = await request.post(path, data);
-      expect(createOrgRes.status).toBe(201);
-      const createdOrg = createOrgRes.body;
+      const createRes = await request.post(path, data);
+      expect(createRes.status).toBe(201);
+      const createdData = createRes.body;
 
       const removeUserRes = await request.post(
-        `${path}/${createdOrg.id}/remove-user`,
+        `${path}/${createdData.id}/remove-user`,
         {}
       );
       expect(removeUserRes.status).toBe(500);
