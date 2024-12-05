@@ -16,16 +16,18 @@ const getData = (entity, number, id) => ({
   project_id: id,
 });
 
-describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
+describe(`${capitalizeFirstLetter(entity)} Endpoints Test Suite`, () => {
   beforeAll(async () => {
     const userData = await getUserData("user", Math.random());
     const createUserRes = await request.post("/users", userData);
 
     const orgData = getOrganisationData("organisation", Math.random());
     const createOrgRes = await request.post("/organisations", orgData);
+    const createdOrg = createOrgRes.body;
 
-    const projectData = getProjectData("project", Math.random());
+    const projectData = getProjectData("project", Math.random(), createdOrg.id);
     const createProjectRes = await request.post("/projects", projectData);
+    const createdProject = createProjectRes.body;
   });
 
   describe(`GET ${path}`, () => {
@@ -265,5 +267,5 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
 });
 
 module.exports = {
-  getProjectData: getData,
+  getTaskData: getData,
 };
