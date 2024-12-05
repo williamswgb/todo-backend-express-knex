@@ -58,7 +58,7 @@ const baseController = (model, entityName) => ({
 
       const deletedData = await model.delete(id);
       res.status(200).json({ message: `${entityName} deleted successfully` });
-    } catch (error) {
+    } catch (err) {
       res.status(500).json({ error: err.message });
     }
   },
