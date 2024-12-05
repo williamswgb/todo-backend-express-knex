@@ -30,30 +30,29 @@ const baseController = (model, entityName) => ({
       const { id } = req.params;
       const data = await model.findById(id);
       if (!data) {
-        res.status(404).json({ message: `${entityName} not found` });
+        return res.status(404).json({ message: `${entityName} not found` });
       }
       res.status(200).json(data);
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
   },
-
   async update(req, res) {
     try {
       const { id } = req.params;
       const updatedData = await model.update(id, req.body);
       if (!updatedData) {
-        res.status(404).json({ message: `${entityName} not found` });
+        return res.status(404).json({ message: `${entityName} not found` });
       }
-      res.status(200).json(data);
+      res.status(200).json(updatedData);
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
   },
-
-  async delete() {
+  async delete(req, res) {
     try {
       const { id } = req.params;
+
       await model.delete(id);
       res.status(200).json({ message: `${entityName} deleted successfully` });
     } catch (err) {
