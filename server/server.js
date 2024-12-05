@@ -1,18 +1,20 @@
-const app = require('./server-config.js');
-const routes = require('./server-routes.js');
+const app = require("./server-config.js");
+
+const organisationRoutes = require("./routes/organisationRoutes");
+const userRoutes = require("./routes/userRoutes");
+const projectRoutes = require("./routes/projectRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 
 const port = process.env.PORT || 5000;
 
-app.get('/', routes.getAllTodos);
-app.get('/:id', routes.getTodo);
+app.use("/organisations", organisationRoutes);
+app.use("/users", userRoutes);
+app.use("/projects", projectRoutes);
+app.use("/tasks", taskRoutes);
+app.use("/comments", commentRoutes);
 
-app.post('/', routes.postTodo);
-app.patch('/:id', routes.patchTodo);
-
-app.delete('/', routes.deleteAllTodos);
-app.delete('/:id', routes.deleteTodo);
-
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   app.listen(port, () => console.log(`Listening on port ${port}`));
 }
 
