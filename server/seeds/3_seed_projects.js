@@ -15,8 +15,8 @@ exports.seed = async function (knex) {
   }
   await knex("projects").insert([
     {
-      name: "My Project",
-      description: "My Description Project",
+      name: `My Project ${Math.random()}`,
+      description: `My Description Project ${Math.random()}`,
       organisation_id: firstOrganisation.id,
     },
   ]);

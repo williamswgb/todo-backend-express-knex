@@ -22,7 +22,7 @@ exports.seed = async function (knex) {
   }
   await knex("comments").insert([
     {
-      content: "My Comment",
+      content: `My Comment ${Math.random()}`,
       task_id: firstTask.id,
       author_id: firstUser.id,
     },

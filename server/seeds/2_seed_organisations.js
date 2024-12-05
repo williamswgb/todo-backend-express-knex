@@ -7,8 +7,8 @@ exports.seed = async function (knex) {
   await knex("organisations").del();
   await knex("organisations").insert([
     {
-      name: "My Organisation",
-      description: "My Description Organisation",
+      name: `My Organisation ${Math.random()}`,
+      description: `My Description Organisation ${Math.random()}`,
     },
   ]);
 };

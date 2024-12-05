@@ -15,8 +15,8 @@ exports.seed = async function (knex) {
   }
   await knex("tasks").insert([
     {
-      title: "My Task",
-      description: "My Description Task",
+      title: `My Task ${Math.random()}`,
+      description: `My Description Task ${Math.random()}`,
       status: "in_progress",
       priority: "high",
       due_date: knex.fn.now(),

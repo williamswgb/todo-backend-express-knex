@@ -9,9 +9,9 @@ exports.seed = async function (knex) {
   await knex("users").del();
   await knex("users").insert([
     {
-      name: "My Name",
-      email: "My Email",
-      password: await bcrypt.hash("My Password", 10),
+      name: `My User ${Math.random()}`,
+      email: `My Email ${Math.random()}`,
+      password: await bcrypt.hash(`My Password ${Math.random()}`, 10),
     },
   ]);
 };
