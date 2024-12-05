@@ -125,3 +125,7 @@ describe(`${capitalizeFirstLetter(entity)} Endpoints Test Cases`, () => {
     });
   });
 });
+
+module.exports = {
+  getUserData: getData,
+};
